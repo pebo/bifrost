@@ -1,0 +1,12 @@
+{
+  "name": "dummy-service",
+  "version": "1.0.0",
+  "description": "A simple dummy service for the bifrost example.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
