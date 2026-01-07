@@ -36,7 +36,18 @@ jobs:
       run: go vet ./...
 
     - name: Run tests
-      run: go test -v -race ./...
+      run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      with:
+        name: coverage
+        path: coverage.txt
+
+    - name: Coverage summary
+      run: |
+        echo "## Coverage" >> $GITHUB_STEP_SUMMARY
+        go tool cover -func=coverage.txt | tail -n 1 >> $GITHUB_STEP_SUMMARY
 
     - name: Check formatting
       run: |

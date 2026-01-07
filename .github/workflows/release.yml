@@ -25,12 +25,16 @@ jobs:
       - name: Run tests
         run: go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          file: ./coverage.txt
-          flags: unittests
-          fail_ci_if_error: false
+          name: coverage
+          path: coverage.txt
+
+      - name: Coverage summary
+        run: |
+          echo "## Coverage" >> $GITHUB_STEP_SUMMARY
+          go tool cover -func=coverage.txt | tail -n 1 >> $GITHUB_STEP_SUMMARY
 
   build:
     name: Build Binaries

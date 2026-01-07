@@ -61,7 +61,8 @@ Once the tag is pushed, GitHub Actions will automatically:
 1. **Run Tests** (5-10 minutes)
    - Execute all tests with race detection
    - Generate coverage report
-   - Upload coverage to Codecov
+   - Upload `coverage.txt` as a GitHub Actions artifact
+   - Write a one-line coverage summary in the job summary
 
 2. **Build Binaries** (10-15 minutes)
    - Build for Linux (amd64, arm64)
