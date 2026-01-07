@@ -113,12 +113,10 @@ jobs:
             exit 0
           fi
 
-          # Extract changelog for this version
-          # Escape dots in version number for regex
-          VERSION_PATTERN=$(echo "$VERSION_NUMBER" | sed 's/\./\\./g')
-
-          CHANGELOG=$(awk -v pattern="^## \\[$VERSION_PATTERN\\]" '
-            $0 ~ pattern {flag=1; next}
+          # Extract changelog for this version.
+          # Avoid regex escaping issues by using string matching for the header line.
+          CHANGELOG=$(awk -v ver="$VERSION_NUMBER" '
+            $0 == "## [" ver "]" || index($0, "## [" ver "] - ") == 1 {flag=1; next}
             /^## \[/ && flag {exit}
             /^\[.*\]:/ && flag {exit}
             flag && NF {print}
