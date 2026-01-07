@@ -1,0 +1,53 @@
+# Basic Bifrost Configuration Example
+#
+# This configuration sets up a simple reverse proxy that routes
+# requests to backend services.
+
+server:
+  # Port to listen on
+  port: 8080
+
+  # Global timeout for all requests (can be overridden per route)
+  timeout: 30s
+
+  # Maximum request body size (10MB)
+  max_body_size: 10485760
+
+  # Headers allowed to pass through to backend services
+  allowed_headers:
+    - "Content-Type"
+    - "Accept"
+    - "User-Agent"
+    - "X-Request-ID"
+
+routes:
+  # Route incoming requests to a backend API
+  - id: "api-service"
+    path: "/api/{path...}"
+    methods: ["GET", "POST", "PUT", "DELETE"]
+    target:
+      # Backend service URL (replace with your actual service)
+      url: "http://localhost:3000"
+      # Map the path - {path...} captures the rest of the path
+      path: "/api/{path...}"
+      timeout: 10s
+    allowed_headers:
+      - "Authorization"
+
+  # Route to another service with path remapping
+  - id: "users-service"
+    path: "/users/{id}"
+    methods: ["GET"]
+    target:
+      url: "http://localhost:3001"
+      # Remap /users/{id} to /v1/users/{id}
+      path: "/v1/users/{id}"
+      timeout: 5s
+
+  # Static content or health check service
+  - id: "health-check"
+    path: "/status"
+    methods: ["GET"]
+    target:
+      url: "http://localhost:3002"
+      path: "/healthz"

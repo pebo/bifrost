@@ -1,0 +1,69 @@
+# Bifrost Configuration: Asgardian Realms Edition
+# This example configures Bifrost to route requests between the Nine Realms.
+server:
+  port: 9000 # A port worthy of the gods.
+  log_level: info # Logging level: debug, info, warn, or error. Defaults to info.
+  timeout: 10s # Global timeout for all inter-realm communication.
+  max_body_size: 10485760 # Maximum request body size in bytes (10MB default). Omit to use default.
+  allowed_headers:
+    # Standard headers blessed by Odin for passage.
+    - "Content-Type"
+    - "Traceparent" # Represents the thread of fate for a request.
+    - "X-Cloud-Trace-Context"
+    - "X-Request-ID" # A unique rune marking each request.
+
+routes:
+  - id: "valhalla-warrior-admission"
+    # Route for admitting chosen warriors to the great hall of Valhalla.
+    path: "/asgard/valhalla/warriors/{warriorId}"
+    methods: ["POST"]
+    policies:
+      log_claims: ["sub", "name"] # Log the warrior's great deeds (JWT claims) for the sagas.
+    allowed_headers:
+      # Requires a special token from a Valkyrie to prove the warrior's worth.
+      - "X-Valkyrie-Selection-Token"
+    target:
+      # The location of Valhalla could be written in the runes (environment variables).
+      url: "https://valhalla-service.a.run.app"
+      path: "/internal/hall-of-the-slain/admit/{warriorId}" # Path remapping to the internal service.
+      timeout: 5s # Admission to Valhalla must be swift.
+      gcp_auth: ${GCP_AUTH_ENABLED:-false} # Secure the path to Valhalla with divine power (GCP IAM).
+
+  - id: "yggdrasil-health-check"
+    # An endpoint for checking the health of the World Tree, Yggdrasil.
+    path: "/monitor/yggdrasil/health"
+    methods: ["GET"]
+    target:
+      url: "https://yggdrasil-monitor-service.a.run.app"
+      path: "/healthz"
+      gcp_auth: ${GCP_AUTH_ENABLED:-false}
+
+  - id: "midgard-mortal-requests"
+    # An endpoint for receiving requests from the mortal realm of Midgard.
+    path: "/midgard/mortals/{userId}/profile"
+    methods: ["GET"]
+    target:
+      url: "http://mortal-profile-service.internal:8080"
+      path: "/profiles/{userId}"
+      gcp_auth: false # Mortals do not possess divine credentials.
+
+  - id: "heimdall-gate-control"
+    # A high-priority route for managing access through the Bifrost itself, guarded by Heimdall.
+    path: "/heimdall/gate/{action}"
+    methods: ["PUT"]
+    allowed_headers:
+      - "X-Heimdall-Horn-Signal" # Requires a signal from Gjallarhorn.
+    target:
+      url: "https://heimdall-gate-control.a.run.app"
+      path: "/gate-control/v1/{action}"
+      gcp_auth: ${GCP_AUTH_ENABLED:-false}
+      timeout: 2s # Heimdall's actions must be immediate.
+# Optional: OpenTelemetry tracing configuration
+# Uncomment to send distributed traces to an OTLP collector
+# telemetry:
+#   enabled: true
+#   service_name: "bifrost-proxy"
+#   otel_collector:
+#     endpoint: "otel-collector.a.run.app"  # OTLP HTTP endpoint (without https://)
+#     gcp_auth: true  # Use GCP OIDC token authentication
+#     timeout: "10s"

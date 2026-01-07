@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "version": { "type": "string" },
+    "server": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        },
+        "log_level": {
+          "type": "string",
+          "enum": ["debug", "info", "warn", "error"],
+          "description": "Logging level. Defaults to 'info' if not specified."
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^[0-9]+(ns|us|ms|s|m|h)$"
+        },
+        "allowed_headers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "max_body_size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum request body size in bytes. If not set or set to 0, it defaults to 10MB (10485760)."
+        }
+      },
+      "required": ["port"]
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string", "minLength": 1, "pattern": "^/" },
+          "methods": { "type": "array", "items": { "enum": ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"] } },
+          "target": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "minLength": 1
+              },
+              "path": {
+                "type": "string"
+              },
+              "gcp_auth": {
+                "type": "boolean"
+              },
+              "timeout": {
+                "type": "string",
+                "pattern": "^[0-9]+(ns|us|ms|s|m|h)$"
+              }
+            },
+            "required": ["url"]
+          }
+        },
+        "required": ["id", "path", "target"]
+      }
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "service_name": { "type": "string" },
+        "otel_collector": {
+          "type": "object",
+          "properties": {
+            "endpoint": { "type": "string" },
+            "gcp_auth": { "type": "boolean" },
+            "timeout": {
+              "type": "string",
+              "pattern": "^[0-9]+(ns|us|ms|s|m|h)$"
+            }
+          },
+          "required": ["endpoint"]
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}
