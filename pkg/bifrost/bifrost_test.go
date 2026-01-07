@@ -93,7 +93,7 @@ func TestBifrost_Handler(t *testing.T) {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	targetService := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello from target"))
+		_, _ = w.Write([]byte("Hello from target"))
 	}))
 	defer targetService.Close()
 
