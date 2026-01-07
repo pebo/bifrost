@@ -77,7 +77,7 @@ jobs:
           fi
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bifrost-${{ matrix.goos }}-${{ matrix.goarch }}
           path: |
