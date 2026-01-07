@@ -85,7 +85,10 @@ func Init(cfg *Config, logger *slog.Logger, tokenProvider engine.TokenProvider) 
 		mp, err := initMeterProvider(cfg, res, logger, tokenProvider)
 		if err != nil {
 			// Shutdown trace provider
-			tp.Shutdown(context.Background())
+			err := tp.Shutdown(context.Background())
+			if err != nil {
+				logger.Error("failed to shutdown trace provider after meter provider init failure", "error", err)
+			}
 			return nil, fmt.Errorf("failed to initialize meter provider: %w", err)
 		}
 		otel.SetMeterProvider(mp)

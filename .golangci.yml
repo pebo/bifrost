@@ -1,0 +1,32 @@
+version: "2"
+
+run:
+  timeout: 5m
+  relative-path-mode: cfg
+
+linters:
+  # 'standard' enables the default set (govet, staticcheck, etc.)
+  default: standard
+  enable:
+    - gosec
+    - bodyclose
+
+  settings:
+    govet:
+      enable-all: true
+      disable:
+        - fieldalignment
+        - shadow         # allow reusing variable names (for now..)
+    gosec:
+      excludes:
+        - G104
+        - G112 # Exclude Slowloris check
+
+  exclusions:
+    presets:
+      - common-false-positives
+      - std-error-handling
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

@@ -361,7 +361,7 @@ func TestRequestBodySizeLimit(t *testing.T) {
 		backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, _ := io.ReadAll(r.Body)
 			w.WriteHeader(http.StatusOK)
-			w.Write(body)
+			_, _ = w.Write(body)
 		}))
 		defer backend.Close()
 
@@ -434,7 +434,7 @@ func TestRequestBodySizeLimit(t *testing.T) {
 		backend := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, _ := io.ReadAll(r.Body)
 			w.WriteHeader(http.StatusOK)
-			w.Write(body)
+			_, _ = w.Write(body)
 		}))
 		defer backend.Close()
 
