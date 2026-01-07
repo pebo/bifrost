@@ -106,20 +106,37 @@ jobs:
           VERSION=${{ steps.version.outputs.VERSION }}
           VERSION_NUMBER=${VERSION#v}
 
+          # Check if CHANGELOG.md exists
+          if [ ! -f CHANGELOG.md ]; then
+            echo "⚠️ CHANGELOG.md not found, using default message"
+            echo "Release $VERSION" > release_notes.md
+            exit 0
+          fi
+
           # Extract changelog for this version
-          CHANGELOG=$(awk -v ver="[$VERSION_NUMBER]" '
-            $0 ~ ver {flag=1; next}
+          # Escape dots in version number for regex
+          VERSION_PATTERN=$(echo "$VERSION_NUMBER" | sed 's/\./\\./g')
+
+          CHANGELOG=$(awk -v pattern="^## \\[$VERSION_PATTERN\\]" '
+            $0 ~ pattern {flag=1; next}
             /^## \[/ && flag {exit}
-            flag {print}
+            /^\[.*\]:/ && flag {exit}
+            flag && NF {print}
           ' CHANGELOG.md)
 
-          # Save to file for GitHub release
-          echo "$CHANGELOG" > release_notes.md
+          # Check if we got any content
+          if [ -z "$CHANGELOG" ]; then
+            echo "⚠️ No changelog entry found for version $VERSION_NUMBER"
+            echo "Release $VERSION" > release_notes.md
+          else
+            echo "$CHANGELOG" > release_notes.md
+            echo "✅ Extracted changelog for version $VERSION_NUMBER"
+          fi
 
-          # Also set as output (truncated for GitHub Actions)
-          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Debug: show what we extracted
+          echo "--- Release Notes Content ---"
+          cat release_notes.md
+          echo "--- End Release Notes ---"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
