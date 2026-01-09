@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/pebo/bifrost)](https://goreportcard.com/report/github.com/pebo/bifrost)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/pebo/bifrost)](https://github.com/pebo/bifrost)
+[![Docker](https://img.shields.io/badge/docker-ghcr.io-blue)](https://github.com/pebo/bifrost/pkgs/container/bifrost)
 
 <img src="./bifrost-logo.png" alt="Bifrost logo" width="128" />
 
@@ -22,13 +23,57 @@ The name Bifrost is taken from Norse mythology, where it is the mythical rainbow
 *   **Health Check Endpoint**: Built-in `/health` endpoint for liveness and readiness probes.
 *   **Production Ready**: Includes robust error handling and configurable HTTP transport for resilient connections.
 
-## Usage
+## Installation
 
-To run the Bifrost proxy, build and run the main command, providing a path to your configuration file.
+### Docker
+
+Pull the latest image from GitHub Container Registry:
 
 ```bash
-go run ./cmd/main.go -config ./example-config.yaml
+docker pull ghcr.io/pebo/bifrost:latest
 ```
+
+Run with your configuration file:
+
+```bash
+docker run -d \
+  --name bifrost \
+  -p 9000:9000 \
+  -v $(pwd)/config.yaml:/etc/bifrost/config.yaml \
+  ghcr.io/pebo/bifrost:latest -config /etc/bifrost/config.yaml
+```
+
+### Pre-built Binaries
+
+Download the latest binary for your platform from the [releases page](https://github.com/pebo/bifrost/releases):
+
+```bash
+# Example: Download and run (replace VERSION with actual version like v0.1.0)
+VERSION=v0.1.0
+
+# Linux (amd64)
+curl -LO https://github.com/pebo/bifrost/releases/download/$VERSION/bifrost-$VERSION-linux-amd64
+chmod +x bifrost-$VERSION-linux-amd64
+./bifrost-$VERSION-linux-amd64 -config config.yaml
+
+# macOS (arm64)
+curl -LO https://github.com/pebo/bifrost/releases/download/$VERSION/bifrost-$VERSION-darwin-arm64
+chmod +x bifrost-$VERSION-darwin-arm64
+./bifrost-$VERSION-darwin-arm64 -config config.yaml
+```
+
+### From Source
+
+Build from source:
+
+```bash
+git clone https://github.com/pebo/bifrost.git
+cd bifrost
+go build -o bifrost ./cmd/main.go
+./bifrost -config config.yaml
+```
+
+## Usage
 
 ### Logging
 

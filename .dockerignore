@@ -1,0 +1,42 @@
+# Git files
+.git
+.gitignore
+.github
+
+# Documentation
+*.md
+docs/
+LICENSE
+CHANGELOG.md
+RELEASING.md
+
+# Examples and tests
+examples/
+*_test.go
+coverage.txt
+testdata/
+
+# Build artifacts
+main
+bifrost
+bifrost-*
+*.exe
+dist/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CI/CD files
+.github/
+
+# Docker files
+docker-compose.yml
+*.Dockerfile
+Dockerfile.*
+
+# Other
+.DS_Store

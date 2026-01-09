@@ -67,10 +67,16 @@ Once the tag is pushed, GitHub Actions will automatically:
 2. **Build Binaries** (10-15 minutes)
    - Build for Linux (amd64, arm64)
    - Build for macOS (amd64, arm64)
-   - Build for Windows (amd64)
    - Generate SHA256 checksums for each binary
+   - Total: 4 binaries + 4 checksums = 8 artifacts
 
-3. **Create GitHub Release** (1-2 minutes)
+3. **Build and Push Docker Images** (5-10 minutes)
+   - Build multi-platform Docker images (linux/amd64, linux/arm64)
+   - Push to GitHub Container Registry (ghcr.io)
+   - Tag with semantic versions (e.g., v0.2.0, 0.2, 0, latest)
+   - Include version information in the image
+
+4. **Create GitHub Release** (1-2 minutes)
    - Extract changelog for the version
    - Create release with all binaries attached
    - Mark as prerelease if tag contains `alpha`, `beta`, or `rc`
@@ -82,15 +88,35 @@ After the workflow completes (15-30 minutes total):
 1. **Check GitHub Release**:
    - Visit https://github.com/pebo/bifrost/releases
    - Verify the release appears with correct version
-   - Verify all binaries are attached (6 files + 6 checksums)
+   - Verify all binaries are attached (4 binaries + 4 checksums = 8 files)
    - Verify changelog content is displayed
 
-2. **Verify pkg.go.dev**:
+2. **Verify Docker Images**:
+   ```bash
+   # Pull the image
+   docker pull ghcr.io/pebo/bifrost:0.2.0
+   
+   # Check available tags
+   docker images ghcr.io/pebo/bifrost
+   
+   # Test the image
+   docker run --rm ghcr.io/pebo/bifrost:0.2.0 -version
+   
+   # Run with a config file
+   docker run --rm -v $(pwd)/example-config.yaml:/etc/bifrost/config.yaml \
+     ghcr.io/pebo/bifrost:0.2.0 -config /etc/bifrost/config.yaml
+   ```
+   
+   - Visit https://github.com/pebo/bifrost/pkgs/container/bifrost
+   - Verify the new version tags are visible
+   - Check that both linux/amd64 and linux/arm64 platforms are available
+
+3. **Verify pkg.go.dev**:
    - Visit https://pkg.go.dev/github.com/pebo/bifrost
    - The new version should appear (may take 10-15 minutes)
    - Check that documentation is up to date
 
-3. **Test a Binary**:
+4. **Test a Binary**:
    ```bash
    # Download a binary
    wget https://github.com/pebo/bifrost/releases/download/v0.2.0/bifrost-v0.2.0-linux-amd64
