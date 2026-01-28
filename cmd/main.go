@@ -78,7 +78,7 @@ func run() error {
 	var logger *slog.Logger
 	switch *logFormat {
 	case "gcp":
-		logger = gcplogging.NewSlogGCPLogger(os.Stdout, level)
+		logger = gcplogging.NewSlogGCPLogger(os.Stdout, level, cfg.Server.GCPProjectID)
 	case "json":
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: level}))
 	default:
