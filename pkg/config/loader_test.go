@@ -60,7 +60,7 @@ func TestExpandEnvStrict_ExpandsBasicVar(t *testing.T) {
 }
 
 func TestValidateConfig_ValidAgainstSchema(t *testing.T) {
-	configYAML := []byte("version: \"1.0\"\nserver:\n  port: 8080\n")
+	configYAML := []byte("version: \"1.0\"\nserver:\n  port: 8080\n  gcp_project_id: \"test-project\"\n")
 	if err := validateConfig(configYAML); err != nil {
 		t.Fatalf("expected schema validation to pass, got %v", err)
 	}

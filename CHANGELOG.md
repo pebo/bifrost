@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- GCP trace ID correlation in Cloud Logging for log-trace integration
+- New `gcp_project_id` configuration option in server settings for trace correlation
+- Automatic extraction of OpenTelemetry trace context in GCP-formatted logs
+- Standard GCP trace fields: `logging.googleapis.com/trace`, `logging.googleapis.com/spanId`, and `logging.googleapis.com/trace_sampled`
+
+### Changed
+- `gcplogging.NewSlogGCPLogger` now accepts a `projectID` parameter (pass empty string to disable trace correlation)
+
 ## [0.1.0] - 2026-01-07
 
 ### Added

@@ -16,6 +16,11 @@
           "enum": ["debug", "info", "warn", "error"],
           "description": "Logging level. Defaults to 'info' if not specified."
         },
+        "gcp_project_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional GCP project ID used to format trace IDs for log/trace correlation in Cloud Logging."
+        },
         "timeout": {
           "type": "string",
           "pattern": "^[0-9]+(ns|us|ms|s|m|h)$"

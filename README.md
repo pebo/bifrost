@@ -37,6 +37,8 @@ You can control the logging output format using the `--log-format` flag.
 *   `--log-format=json` (default): Standard structured JSON logging.
 *   `--log-format=gcp`: JSON logging structured for Google Cloud's operations suite (formerly Stackdriver). This format is automatically parsed by Google Cloud Logging, providing better filtering and integration with services like Error Reporting.
 
+If you set `server.gcp_project_id` and use `--log-format=gcp`, Bifrost will also include OpenTelemetry trace context fields in each log entry (when a span is present) so logs can be correlated with Cloud Trace.
+
 Example:
 ```bash
 go run ./cmd/main.go -config ./example-config.yaml --log-format=gcp
@@ -214,7 +216,7 @@ log.Printf("Active requests: %d", activeCount)
 
 ## Configuration
 
-Bifrost is configured using a single YAML file. See `internal/config/config-schema.json` for the full specification.
+Bifrost is configured using a single YAML file. See `pkg/config/config-schema.json` for the full specification.
 
 ### Example `example-config.yaml`
 
@@ -286,6 +288,8 @@ routes:
 | Key              | Type     | Description                                                                 |
 | ---------------- | -------- | --------------------------------------------------------------------------- |
 | `port`           | `int`    | The port on which the proxy will listen.                                    |
+| `log_level`      | `string` | Logging level: `debug`, `info`, `warn`, `error`. Defaults to `info`.        |
+| `gcp_project_id` | `string` | Optional GCP project ID used to format trace IDs for log/trace correlation in Cloud Logging (requires `--log-format=gcp`). |
 | `timeout`        | `string` | Global timeout for requests (e.g., "10s", "500ms"). Defaults to 30s if not specified. Can be overridden per route. |
 | `max_body_size`  | `int`    | Maximum request body size in bytes. Defaults to 10MB (10485760 bytes). Protects against DoS attacks via large payloads. Set explicitly to 0 for unlimited (not recommended). |
 | `allowed_headers` | `[]string` | A list of HTTP header keys that are allowed to be passed to all targets.    |

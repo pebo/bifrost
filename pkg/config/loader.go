@@ -84,6 +84,9 @@ type Server struct {
 	// LogLevel sets the logging level (debug, info, warn, error)
 	// Defaults to "info" if not specified
 	LogLevel string `yaml:"log_level"`
+	// GCPProjectID is the GCP project ID for trace correlation in Cloud Logging (optional)
+	// When set, logs will include trace IDs for correlation with Cloud Trace
+	GCPProjectID string `yaml:"gcp_project_id"`
 	// AllowedHeaders lists HTTP headers to pass through to backend services
 	AllowedHeaders []string `yaml:"allowed_headers"`
 	// Timeout is the default request timeout for all routes (e.g., "30s", "1m")

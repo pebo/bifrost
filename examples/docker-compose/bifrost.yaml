@@ -2,6 +2,8 @@ server:
   port: 8080
   timeout: 15s
   max_body_size: 10485760  # 10MB (this is also the default if omitted)
+  # Optional: Set your GCP project ID for trace correlation in Cloud Logging
+  # gcp_project_id: "your-gcp-project-id"
   allowed_headers:
     - "Content-Type"
     - "X-Cloud-Trace-Context"

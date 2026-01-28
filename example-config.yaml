@@ -5,6 +5,9 @@ server:
   log_level: info # Logging level: debug, info, warn, or error. Defaults to info.
   timeout: 10s # Global timeout for all inter-realm communication.
   max_body_size: 10485760 # Maximum request body size in bytes (10MB default). Omit to use default.
+  # Optional: GCP project ID for trace correlation in Cloud Logging
+  # When set, logs will include trace IDs that link to Cloud Trace
+  # gcp_project_id: "your-gcp-project-id"
   allowed_headers:
     # Standard headers blessed by Odin for passage.
     - "Content-Type"
