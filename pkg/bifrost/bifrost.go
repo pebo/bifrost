@@ -327,6 +327,10 @@ func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 
 // validateRoute checks that a route has valid configuration.
 func validateRoute(r config.Route, index int) error {
+	if strings.TrimSpace(r.ID) == "" {
+		return fmt.Errorf("route %d: id cannot be empty", index)
+	}
+
 	if strings.TrimSpace(r.Path) == "" {
 		return fmt.Errorf("route %d: path cannot be empty", index)
 	}

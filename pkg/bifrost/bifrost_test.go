@@ -26,12 +26,14 @@ func TestNew(t *testing.T) {
 			},
 			Routes: []config.Route{
 				{
+					ID:   "service1",
 					Path: "/service1",
 					Target: config.Target{
 						URL: "http://localhost:8081",
 					},
 				},
 				{
+					ID:      "service2",
 					Path:    "/service2",
 					Methods: []string{"GET", "POST"},
 					Target: config.Target{
@@ -51,6 +53,7 @@ func TestNew(t *testing.T) {
 		cfg := &config.Config{
 			Routes: []config.Route{
 				{
+					ID:   "invalid",
 					Path: "/invalid",
 					Target: config.Target{
 						URL: "http://invalid-url:-1", // Invalid port
@@ -104,12 +107,14 @@ func TestBifrost_Handler(t *testing.T) {
 		},
 		Routes: []config.Route{
 			{
+				ID:   "test-any",
 				Path: "/test",
 				Target: config.Target{
 					URL: targetService.URL,
 				},
 			},
 			{
+				ID:      "test-get",
 				Path:    "/test-get",
 				Methods: []string{"GET"},
 				Target: config.Target{
@@ -214,6 +219,7 @@ func TestGracefulShutdown(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "slow",
 					Path: "/slow",
 					Target: config.Target{
 						URL: backend.URL,
@@ -265,6 +271,7 @@ func TestGracefulShutdown(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "veryslow",
 					Path: "/veryslow",
 					Target: config.Target{
 						URL: backend.URL,
@@ -324,6 +331,7 @@ func TestGracefulShutdown(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "concurrent",
 					Path: "/concurrent",
 					Target: config.Target{
 						URL: backend.URL,
@@ -375,6 +383,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "valid route with target URL",
 			route: config.Route{
+				ID:   "users",
 				Path: "/users",
 				Target: config.Target{
 					URL: "http://localhost:8080",
@@ -386,6 +395,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "valid route with methods",
 			route: config.Route{
+				ID:      "posts",
 				Path:    "/posts",
 				Methods: []string{"GET", "POST"},
 				Target: config.Target{
@@ -396,8 +406,21 @@ func TestValidateRoute(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "empty route id",
+			route: config.Route{
+				Path: "/users",
+				Target: config.Target{
+					URL: "http://localhost:8080",
+				},
+			},
+			index:   0,
+			wantErr: true,
+			errMsg:  "id cannot be empty",
+		},
+		{
 			name: "empty path",
 			route: config.Route{
+				ID:   "empty-path",
 				Path: "",
 				Target: config.Target{
 					URL: "http://localhost:8080",
@@ -410,6 +433,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "path without leading slash",
 			route: config.Route{
+				ID:   "no-leading-slash",
 				Path: "users",
 				Target: config.Target{
 					URL: "http://localhost:8080",
@@ -422,6 +446,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "empty target URL",
 			route: config.Route{
+				ID:   "empty-target-url",
 				Path: "/api",
 				Target: config.Target{
 					URL: "",
@@ -434,6 +459,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "target URL must be absolute",
 			route: config.Route{
+				ID:   "relative-target-url",
 				Path: "/api",
 				Target: config.Target{
 					URL: "localhost:8080",
@@ -446,6 +472,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "invalid HTTP method",
 			route: config.Route{
+				ID:      "invalid-method",
 				Path:    "/resource",
 				Methods: []string{"GET", "INVALID"},
 				Target: config.Target{
@@ -459,6 +486,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "valid HTTP methods uppercase",
 			route: config.Route{
+				ID:      "uppercase-methods",
 				Path:    "/resource",
 				Methods: []string{"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"},
 				Target: config.Target{
@@ -471,6 +499,7 @@ func TestValidateRoute(t *testing.T) {
 		{
 			name: "valid HTTP methods lowercase",
 			route: config.Route{
+				ID:      "lowercase-methods",
 				Path:    "/resource",
 				Methods: []string{"get", "post", "delete"},
 				Target: config.Target{
@@ -503,6 +532,7 @@ func TestNew_RouteValidation(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "empty-path",
 					Path: "",
 					Target: config.Target{
 						URL: "http://localhost:8080",
@@ -516,11 +546,30 @@ func TestNew_RouteValidation(t *testing.T) {
 		assert.Contains(t, err.Error(), "path cannot be empty")
 	})
 
+	t.Run("should fail on empty route id", func(t *testing.T) {
+		cfg := &config.Config{
+			Server: config.Server{Port: 8080},
+			Routes: []config.Route{
+				{
+					Path: "/api",
+					Target: config.Target{
+						URL: "http://localhost:8080",
+					},
+				},
+			},
+		}
+		b, err := New(cfg, logger)
+		assert.Error(t, err)
+		assert.Nil(t, b)
+		assert.Contains(t, err.Error(), "id cannot be empty")
+	})
+
 	t.Run("should fail on empty target URL", func(t *testing.T) {
 		cfg := &config.Config{
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "empty-target-url",
 					Path: "/api",
 					Target: config.Target{
 						URL: "",
@@ -539,6 +588,7 @@ func TestNew_RouteValidation(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:      "invalid-method",
 					Path:    "/api",
 					Methods: []string{"UNKNOWN"},
 					Target: config.Target{
@@ -558,6 +608,7 @@ func TestNew_RouteValidation(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "relative-target-url",
 					Path: "/api",
 					Target: config.Target{
 						URL: "localhost:8080",
@@ -576,12 +627,14 @@ func TestNew_RouteValidation(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:   "api-1",
 					Path: "/api",
 					Target: config.Target{
 						URL: "http://localhost:8080",
 					},
 				},
 				{
+					ID:   "api-2",
 					Path: "/api",
 					Target: config.Target{
 						URL: "http://localhost:8081",
@@ -600,6 +653,7 @@ func TestNew_RouteValidation(t *testing.T) {
 			Server: config.Server{Port: 8080},
 			Routes: []config.Route{
 				{
+					ID:      "users-1",
 					Path:    "/users",
 					Methods: []string{"GET"},
 					Target: config.Target{
@@ -607,6 +661,7 @@ func TestNew_RouteValidation(t *testing.T) {
 					},
 				},
 				{
+					ID:      "users-2",
 					Path:    "/users",
 					Methods: []string{"GET"},
 					Target: config.Target{
