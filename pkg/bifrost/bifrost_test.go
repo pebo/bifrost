@@ -432,6 +432,18 @@ func TestValidateRoute(t *testing.T) {
 			errMsg:  "target URL cannot be empty",
 		},
 		{
+			name: "target URL must be absolute",
+			route: config.Route{
+				Path: "/api",
+				Target: config.Target{
+					URL: "localhost:8080",
+				},
+			},
+			index:   2,
+			wantErr: true,
+			errMsg:  "target URL must be absolute with scheme and host",
+		},
+		{
 			name: "invalid HTTP method",
 			route: config.Route{
 				Path:    "/resource",
@@ -539,6 +551,24 @@ func TestNew_RouteValidation(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, b)
 		assert.Contains(t, err.Error(), "invalid HTTP method")
+	})
+
+	t.Run("should fail on relative target URL", func(t *testing.T) {
+		cfg := &config.Config{
+			Server: config.Server{Port: 8080},
+			Routes: []config.Route{
+				{
+					Path: "/api",
+					Target: config.Target{
+						URL: "localhost:8080",
+					},
+				},
+			},
+		}
+		b, err := New(cfg, logger)
+		assert.Error(t, err)
+		assert.Nil(t, b)
+		assert.Contains(t, err.Error(), "target URL must be absolute with scheme and host")
 	})
 
 	t.Run("should fail on duplicate route pattern", func(t *testing.T) {
