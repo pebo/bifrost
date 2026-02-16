@@ -17,7 +17,7 @@ Bifrost is a lightweight, config-driven reverse proxy in Go for routing traffic 
 - `example-config.yaml`: reference config.
 
 ## Local workflow
-- Go version: `go 1.25` (see `go.mod`).
+- Go version: `go 1.26` (see `go.mod`).
 - Run: `go run ./cmd/main.go -config ./example-config.yaml`
 - Validate config only: `go run ./cmd/main.go -config ./example-config.yaml --validate`
 - Test: `go test ./...`
