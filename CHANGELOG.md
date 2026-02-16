@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - `gcplogging.NewSlogGCPLogger` now accepts a `projectID` parameter (pass empty string to disable trace correlation)
 
+### Fixed
+- Route validation now rejects non-absolute `target.url` values (must include both scheme and host)
+
 ## [0.1.0] - 2026-01-07
 
 ### Added

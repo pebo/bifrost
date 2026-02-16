@@ -65,6 +65,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -336,6 +337,11 @@ func validateRoute(r config.Route, index int) error {
 
 	if strings.TrimSpace(r.Target.URL) == "" {
 		return fmt.Errorf("route %d: target URL cannot be empty", index)
+	}
+
+	targetURL, err := url.Parse(r.Target.URL)
+	if err != nil || targetURL.Scheme == "" || targetURL.Host == "" {
+		return fmt.Errorf("route %d: target URL must be absolute with scheme and host, got %q", index, r.Target.URL)
 	}
 
 	// Validate HTTP methods if specified
