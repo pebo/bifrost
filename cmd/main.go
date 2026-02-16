@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"time"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/pebo/bifrost/internal/engine"
 	"github.com/pebo/bifrost/pkg/bifrost"
@@ -145,7 +146,7 @@ func run() error {
 
 	// Channel to listen for interrupt signals
 	shutdown := make(chan os.Signal, 1)
-	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(shutdown, os.Interrupt, unix.SIGTERM)
 
 	// Block until we receive a signal or server error
 	select {
