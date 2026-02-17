@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"log/slog"
@@ -84,6 +85,12 @@ func (p *Proxy) CreateHandler(route config.Route) (http.HandlerFunc, error) {
 	reverseProxy.Transport = newTransport()
 
 	reverseProxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
+		if isRequestBodyTooLarge(err) {
+			p.logger.Warn("request body exceeds maximum size", "error", err, "host", r.Host, "url", r.URL)
+			http.Error(w, "Request Entity Too Large", http.StatusRequestEntityTooLarge)
+			return
+		}
+
 		p.logger.Error("proxy error", "error", err, "host", r.Host, "url", r.URL)
 		http.Error(w, "Bad Gateway", http.StatusBadGateway)
 	}
@@ -227,4 +234,13 @@ func (p *Proxy) createHeaderAllowlist(route config.Route) map[string]bool {
 		m[headerAuthorization] = true
 	}
 	return m
+}
+
+func isRequestBodyTooLarge(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	var maxBytesErr *http.MaxBytesError
+	return errors.As(err, &maxBytesErr)
 }

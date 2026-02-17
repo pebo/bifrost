@@ -425,9 +425,8 @@ func TestRequestBodySizeLimit(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		handler.ServeHTTP(w, req)
-		// MaxBytesReader causes the request to fail, resulting in 502 Bad Gateway
-		// This is the correct behavior - the proxy detects the oversized body and aborts
-		assert.Equal(t, http.StatusBadGateway, w.Code)
+		// MaxBytesReader causes the request to fail and should surface as 413.
+		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
 	})
 
 	t.Run("should use default 10MB limit when max_body_size is 0", func(t *testing.T) {
