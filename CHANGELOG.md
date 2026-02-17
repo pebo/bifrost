@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-17
+
 ### Added
 - GCP trace ID correlation in Cloud Logging for log-trace integration
 - New `gcp_project_id` configuration option in server settings for trace correlation
@@ -14,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standard GCP trace fields: `logging.googleapis.com/trace`, `logging.googleapis.com/spanId`, and `logging.googleapis.com/trace_sampled`
 
 ### Changed
+- Go toolchain version updated to `1.26`
 - `gcplogging.NewSlogGCPLogger` now accepts a `projectID` parameter (pass empty string to disable trace correlation)
 
 ### Fixed
@@ -55,5 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pkg/telemetry` - OpenTelemetry setup and instrumentation
 - `internal/engine` - Core proxy engine with authentication
 
-[Unreleased]: https://github.com/pebo/bifrost/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/pebo/bifrost/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/pebo/bifrost/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pebo/bifrost/releases/tag/v0.1.0
