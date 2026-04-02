@@ -4,8 +4,11 @@ updates:
   - package-ecosystem: "gomod"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
+    cooldown:
+      semver-major-days: 5
+      semver-minor-days: 3
+      semver-patch-days: 2
     open-pull-requests-limit: 5
     groups:
       opentelemetry:
@@ -19,14 +22,16 @@ updates:
   - package-ecosystem: "docker"
     directory: "/examples/docker-compose"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
+    cooldown:
+      default-days: 3
     open-pull-requests-limit: 3
 
   # GitHub Actions (for when you add them)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: "daily"
+    cooldown:
+      default-days: 3
     open-pull-requests-limit: 3
