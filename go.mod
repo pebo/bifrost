@@ -16,7 +16,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.43.0
 	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sys v0.42.0
-	google.golang.org/api v0.274.0
+	google.golang.org/api v0.275.0
 )
 
 require (
@@ -27,7 +27,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/auth v0.18.2 // indirect
+	cloud.google.com/go/auth v0.20.0 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
@@ -39,11 +39,11 @@ require (
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.14 // indirect
-	github.com/googleapis/gax-go/v2 v2.19.0 // indirect
+	github.com/googleapis/gax-go/v2 v2.21.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.28.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.64.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	golang.org/x/crypto v0.49.0 // indirect
