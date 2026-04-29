@@ -81,8 +81,9 @@ func (p *Proxy) CreateHandler(route config.Route) (http.HandlerFunc, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse target URL %s: %w", route.Target.URL, err)
 	}
-	reverseProxy := httputil.NewSingleHostReverseProxy(targetBase)
-	reverseProxy.Transport = newTransport()
+	reverseProxy := &httputil.ReverseProxy{
+		Transport: newTransport(),
+	}
 
 	reverseProxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		if isRequestBodyTooLarge(err) {
@@ -98,31 +99,22 @@ func (p *Proxy) CreateHandler(route config.Route) (http.HandlerFunc, error) {
 	// Define the Allowlist for this specific route
 	allowlist := p.createHeaderAllowlist(route)
 
-	// Setup the Director once to avoid data races
-	originalDirector := reverseProxy.Director
-	reverseProxy.Director = func(req *http.Request) {
-		// Remove any client-supplied forwarded headers to prevent spoofing.
-		// The reverse proxy will set correct values based on the incoming connection.
-		req.Header.Del(headerXForwardedFor)
-		req.Header.Del(headerXForwardedHost)
-		req.Header.Del(headerXForwardedProto)
+	reverseProxy.Rewrite = func(pr *httputil.ProxyRequest) {
+		pr.SetURL(targetBase)
+		pr.SetXForwarded()
 
-		originalDirector(req)
-
-		// Remap the Path
-		newPath := p.resolveTargetPath(route.Target.Path, req)
+		// Remap the path based on route template placeholders.
+		newPath := p.resolveTargetPath(route.Target.Path, pr.In)
 		if newPath == "" {
-			newPath = req.URL.Path
+			newPath = pr.In.URL.Path
 		}
-		req.URL.Path = path.Clean(newPath)
+		pr.Out.URL.Path = path.Clean(newPath)
 
 		// Fix Host for Cloud Run
-		req.URL.Host = targetBase.Host
-		req.URL.Scheme = targetBase.Scheme
-		req.Host = targetBase.Host
+		pr.Out.Host = targetBase.Host
 
 		// Header Filtering (Security)
-		p.filterHeaders(req, allowlist)
+		p.filterHeaders(pr.Out, allowlist)
 	}
 
 	// Get tracer for span creation
