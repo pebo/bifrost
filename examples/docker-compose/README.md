@@ -34,6 +34,16 @@ This example consists of five services:
 
 Once the services are running, you can test the proxy by sending requests to Bifrost on port `8080`.
 
+### One-command smoke test
+
+You can run the full docker-compose integration smoke test from the repository root:
+
+```bash
+./scripts/integration-smoke.sh
+```
+
+This script builds the stack, waits for health, validates GET/POST proxying behavior, and tears everything down.
+
 ### GET Request
 
 Send a GET request to `/hello/{name}`. Bifrost will forward it to the `dummy-service`.
