@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
 	"golang.org/x/sys/unix"
@@ -19,13 +20,20 @@ import (
 	"github.com/pebo/bifrost/pkg/telemetry"
 )
 
+func sanitizeLogField(v string) string {
+	v = strings.ReplaceAll(v, "\r", "")
+	v = strings.ReplaceAll(v, "\n", "")
+	return v
+}
+
 // loggingMiddleware logs the incoming request
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		//nolint:gosec // Request fields are sanitized with CR/LF stripping before logging.
 		slog.Info("incoming request",
-			"method", r.Method,
-			"uri", r.RequestURI,
-			"remote_addr", r.RemoteAddr,
+			"method", sanitizeLogField(r.Method),
+			"uri", sanitizeLogField(r.RequestURI),
+			"remote_addr", sanitizeLogField(r.RemoteAddr),
 		)
 		next.ServeHTTP(w, r)
 	})
