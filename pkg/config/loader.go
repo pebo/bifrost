@@ -95,6 +95,8 @@ type Server struct {
 	// MaxBodySize is the maximum request body size in bytes
 	// Defaults to 10MB (10485760 bytes) if not specified or set to 0
 	MaxBodySize int64 `yaml:"max_body_size"`
+	// DisableAccessLog suppresses the per-request access log lines
+	DisableAccessLog bool `yaml:"disable_access_log"`
 }
 
 // Route defines a routing rule for proxying requests to a backend service.

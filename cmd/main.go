@@ -136,9 +136,16 @@ func run() error {
 
 	// 8. Start the HTTP server with graceful shutdown
 	addr := fmt.Sprintf(":%d", b.Config().Server.Port)
+
+	// Build middleware chain: optional access log → proxy.
+	handler := b.Handler
+	if !cfg.Server.DisableAccessLog {
+		handler = loggingMiddleware(handler)
+	}
+
 	srv := &http.Server{
 		Addr:    addr,
-		Handler: loggingMiddleware(b.Handler),
+		Handler: handler,
 		// Mitigate slowloris-style attacks; keep response streaming intact.
 		ReadHeaderTimeout: 5 * time.Second,
 	}

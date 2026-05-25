@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `server.disable_access_log` config option to suppress per-request access log lines
+
 ## [0.2.0] - 2026-02-17
 
 ### Added
