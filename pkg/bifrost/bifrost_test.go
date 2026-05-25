@@ -719,3 +719,10 @@ func TestResponseWriter_Flush(t *testing.T) {
 		})
 	})
 }
+
+func TestResponseWriter_Unwrap(t *testing.T) {
+	inner := httptest.NewRecorder()
+	rw := &responseWriter{ResponseWriter: inner}
+
+	assert.Equal(t, inner, rw.Unwrap())
+}

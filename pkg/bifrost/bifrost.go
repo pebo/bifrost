@@ -311,6 +311,13 @@ func (rw *responseWriter) Flush() {
 	}
 }
 
+// Unwrap returns the underlying http.ResponseWriter, allowing
+// http.NewResponseController to access optional interfaces (e.g.,
+// http.Hijacker) supported by the wrapped writer.
+func (rw *responseWriter) Unwrap() http.ResponseWriter {
+	return rw.ResponseWriter
+}
+
 // healthCheckHandler provides a health check endpoint for monitoring and orchestration.
 // It returns HTTP 200 OK with a JSON response body indicating the service is running.
 // This endpoint is automatically registered at GET /health and can be used for:

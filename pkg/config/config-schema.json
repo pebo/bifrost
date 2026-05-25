@@ -33,6 +33,10 @@
           "type": "integer",
           "minimum": 0,
           "description": "Maximum request body size in bytes. If not set or set to 0, it defaults to 10MB (10485760)."
+        },
+        "disable_access_log": {
+          "type": "boolean",
+          "description": "Suppresses per-request access log lines. Useful in high-traffic production environments."
         }
       },
       "required": ["port"]

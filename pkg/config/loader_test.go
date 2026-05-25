@@ -73,3 +73,10 @@ func TestValidateConfig_InvalidAgainstSchema(t *testing.T) {
 		t.Fatalf("expected schema validation to fail, got nil")
 	}
 }
+
+func TestValidateConfig_DisableAccessLog(t *testing.T) {
+	configYAML := []byte("server:\n  port: 8080\n  disable_access_log: true\n")
+	if err := validateConfig(configYAML); err != nil {
+		t.Fatalf("expected schema validation to pass with disable_access_log, got %v", err)
+	}
+}
