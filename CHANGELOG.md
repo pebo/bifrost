@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-28
+
 ### Added
 - `server.disable_access_log` config option to suppress per-request access log lines
 
@@ -61,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pkg/telemetry` - OpenTelemetry setup and instrumentation
 - `internal/engine` - Core proxy engine with authentication
 
-[Unreleased]: https://github.com/pebo/bifrost/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/pebo/bifrost/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/pebo/bifrost/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/pebo/bifrost/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pebo/bifrost/releases/tag/v0.1.0
