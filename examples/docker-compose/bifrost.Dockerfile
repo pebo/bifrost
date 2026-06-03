@@ -1,5 +1,5 @@
 # Dockerfile for bifrost to be used in the docker compose example
-FROM golang:1.26.3-alpine
+FROM golang:1.26.4-alpine
 
 WORKDIR /app/bifrost
 
